@@ -1,38 +1,40 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 import { Button, Input, Label } from './ContactForm.styled';
 
-class ContactForm extends Component {
+function ContactForm({ onSubmit }) {
 
-    static propTypes = {
-        onSubmit: PropTypes.func.isRequired,
-    };
+    const [name, setName] = useState('');
+    const [number, setNumber] = useState('');
 
-    state = {
-        name: '',
-        number: '',
-    };
-
-    handleChange = (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.currentTarget;
-        this.setState({ [name]: value });
+
+        switch (name) {
+            case 'name': setName(value);
+                break;
+            
+            case 'number': setNumber(value);
+                break;
+            
+            default: break;
+        }
     };
 
-    handelSubmit = (e) => {
+    const handelSubmit = (e) => {
         e.preventDefault();
-        this.props.onSubmit(this.state);
-        this.reset();
+        onSubmit({name: name, number: number});
+        reset();
     };
 
-    reset = () => {
-        this.setState({ name: '', number: '' });
+    const reset = () => {
+        setName('');
+        setNumber('');
     };
 
-    render() {
-        const { name, number } = this.state;
         return (
-            <form onSubmit={this.handelSubmit}>
+            <form onSubmit={handelSubmit}>
                 <Label>
                     Name
                     <Input
@@ -43,7 +45,7 @@ class ContactForm extends Component {
                         required
                         value={name}
                         placeholder="Enter your name..."
-                        onChange={this.handleChange}
+                        onChange={handleChange}
                     />
                 </Label>
                 <Label>
@@ -56,13 +58,16 @@ class ContactForm extends Component {
                         required
                         value={number}
                         placeholder="Enter your number..."
-                        onChange={this.handleChange}
+                        onChange={handleChange}
                     />
                 </Label>
                 <Button type="submit">Add contact</Button>
             </form>
         );
-    };
+};
+
+ContactForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default ContactForm;
